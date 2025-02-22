@@ -1,29 +1,34 @@
+@Library("shared-lib") _
 pipeline {
-    agent { label "dev-server" }
-    stages{
-        stage("Clone Code"){
-            steps{
-                git url: "https://github.com/LondheShubham153/node-todo-cicd.git", branch: "master"
-            }
-        }
-        stage("Build and Test"){
-            steps{
-                sh "docker build . -t node-app-test-new"
-            }
-        }
-        stage("Push to Docker Hub"){
-            steps{
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker tag node-app-test-new ${env.dockerHubUser}/node-app-test-new:latest"
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker push ${env.dockerHubUser}/node-app-test-new:latest"
-                }
-            }
-        }
-        stage("Deploy"){
-            steps{
-                sh "docker-compose down && docker-compose up -d"
-            }
-        }
-    }
-}
+     agent { label "jenkins-new-node-label" }
+     stages{
+         stage("Clone Code"){
+             steps{
+                 script{
+                     clone("https://github.com/Rohit-Singh-Repos/node-todo-cicd","master")
+                 }
+             }
+         }
+         stage("Build and Test"){
+             steps{
+                 script{
+                     build("node-app-test-new","latest","rohitsingh3010")
+                 }
+             }
+         }
+         stage("Push to Docker Hub"){
+             steps{
+                 script{
+                     push("node-app-test-new","latest","rohitsingh3010")
+                 }
+             }
+         }
+         stage("Deploy"){
+             steps{
+                 script{
+                     deploy()
+                 }
+             }
+         }
+     }
+ }
