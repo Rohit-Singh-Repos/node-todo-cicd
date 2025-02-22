@@ -4,7 +4,7 @@ services:
   web:
     image: "trainwithshubham/node-app-test-new:latest"
     ports:
-      - "8081:8000"
+      - "8000:8000"
 
 
 
